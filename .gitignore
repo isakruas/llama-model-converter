@@ -1,0 +1,28 @@
+# Ignore the virtual environment directory
+venv/
+
+# Ignore Jupyter Notebook files
+*.ipynb
+
+# Ignore all files in the models directory
+models/*
+
+# Ignore common editor files
+*.swp              # Vim swap files
+*.swo              # Vim backup files
+*.tmp              # Temporary files
+*.log              # Log files
+
+# Ignore IDE directories
+.idea/             # JetBrains IDEs (e.g., PyCharm)
+.vscode/           # Visual Studio Code settings
+*.code-workspace   # Visual Studio Code workspace files
+
+# Ignore Python cache files
+__pycache__/       # Python cache directories
+*.pyc              # Compiled Python files
+*.pyo              # Optimized Python files
+
+# Ignore other common cache files
+*.cache            # Cache files
+*.orig             # Original files (e.g., from merge conflicts)
