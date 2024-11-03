@@ -28,7 +28,7 @@ model.generation_config.pad_token_id = tokenizer.pad_token_id
 # Generation settings
 generation_config = GenerationConfig(
     max_new_tokens=128 * 10**2,
-    max_time=120.0,
+    max_time=60.0*5,
     stop_strings=["<|end_of_text|>", "<|eot_id|>", "<|eom_id|>"],
 )
 
@@ -67,9 +67,13 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
         post_data = self.rfile.read(content_length)
 
         # Load data from JSON
-        data = json.loads(post_data)
-        prompt = data.get("prompt", "")
-
+        try:
+            data = json.loads(post_data)
+            prompt = data.get("prompt", "")
+        except json.decoder.JSONDecodeError:
+            self.send_error(400, "Invalid JSON")
+            return
+        
         # Generate text based on the prompt
         generated_text = generate_text(prompt)
 
@@ -82,8 +86,8 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-Type", "application/json")
             self.end_headers()
             self.wfile.write(json.dumps(response).encode("utf-8"))
-        except BrokenPipeError:
-            pass
+        except (BrokenPipeError, ConnectionResetError):
+            return
 
 
 # Define the server port
@@ -92,7 +96,7 @@ PORT = 5000
 # Create and start the server with a timeout of 120 seconds
 try:
     with socketserver.TCPServer(("", PORT), RequestHandler) as httpd:
-        httpd.timeout = 120  # Set timeout to 120 seconds
+        httpd.timeout = 60*5  # Set timeout to 120 seconds
         print(f"Server running on port {PORT}")
         httpd.serve_forever()
 except KeyboardInterrupt:
